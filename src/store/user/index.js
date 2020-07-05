@@ -64,7 +64,10 @@ const actions = {
   },
 
   redirectToHome() {
-    if (!router.currentRoute.path.endsWith("home")) {
+    if (
+      !router.currentRoute.path.endsWith("home") &&
+      !router.currentRoute.path.endsWith("about")
+    ) {
       router.replace({ name: "home" });
     }
   },
