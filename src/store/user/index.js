@@ -1,9 +1,5 @@
+import router from "../../router/index";
 import firebase from "../../firebase";
-
-import Vue from "vue";
-import Vuex from "vuex";
-import router from "../router/index";
-import * as firebase from "firebase/app";
 import "firebase/auth";
 
 import { Loading } from "quasar";
@@ -14,7 +10,8 @@ const state = {
 };
 
 const getters = {
-  isUserAuthenticated: state => state.isAuthenticated
+  isUserAuthenticated: state => state.isAuthenticated,
+  getUserProfile: state => state.userProfile
 };
 
 const mutations = {
@@ -23,16 +20,52 @@ const mutations = {
   },
   SET_USER_LOGGED_IN(state) {
     state.isAuthenticated = true;
+  },
+  SET_USER_INFO(state, user) {
+    state.userProfile = {
+      name: user.displayName,
+      picture: user.photoURL,
+      email: user.email
+    };
   }
 };
 
 const actions = {
-  isAuthenticated() {
-    return firebase.auth().currentUser;
+  async googleLogin({ commit, getters }) {
+    if (getters.isUserAuthenticated) return;
+
+    Loading.show();
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    try {
+      await firebase.auth().signInWithPopup(provider);
+      commit("SET_USER_LOGGED_IN");
+    } catch (e) {
+      console.log(e);
+    } finally {
+      Loading.hide();
+    }
+  },
+
+  async login({ commit, getters }, { email, password }) {
+    if (getters.isUserAuthenticated) return;
+
+    Loading.show();
+
+    try {
+      await firebase.auth().signInWithEmailAndPassword(email, password);
+
+      commit("SET_USER_LOGGED_IN");
+    } catch (e) {
+      console.log(e);
+    } finally {
+      Loading.hide();
+    }
   },
 
   redirectToHome() {
     if (!router.currentRoute.path.endsWith("home")) {
+      console.log("redirect");
       router.replace({ name: "home" });
     }
   },
@@ -48,6 +81,8 @@ const actions = {
     try {
       const user = await firebase.auth().onAuthStateChanged(user => {
         if (user) {
+          console.log("111", user);
+          commit("SET_USER_INFO", user);
           commit("SET_USER_LOGGED_IN");
           dispatch("redirectToHome");
         } else {
@@ -81,26 +116,6 @@ const actions = {
     }
   },
 
-  async login({ commit }, { email, password }) {
-    Loading.show();
-    console.log("login start");
-
-    try {
-      const user = await firebase
-        .auth()
-        .signInWithEmailAndPassword(email, password);
-
-      // await dispatch("redirectToHome");
-      console.log("login data: ", user);
-
-      commit("SET_USER_LOGGED_IN");
-    } catch (e) {
-      console.log(e);
-    } finally {
-      Loading.hide();
-    }
-  },
-
   async register({ commit, dispatch }, { email, password }) {
     Loading.show();
     try {
@@ -120,4 +135,12 @@ const actions = {
       Loading.hide();
     }
   }
+};
+
+export default {
+  namespaced: true,
+  state,
+  getters,
+  mutations,
+  actions
 };

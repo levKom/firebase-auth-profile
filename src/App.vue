@@ -2,12 +2,14 @@
   <div class="app text-white column justify-between">
     <q-toolbar class="bg-black text-white shadow-2 nav">
       <q-btn
+        v-if="isUserAuthenticated"
         flat
         to="/home"
         label="home"
         :class="[isActivePage('home') && 'bg-secondary']"
       />
       <q-btn
+        v-if="isUserAuthenticated"
         flat
         to="/about"
         label="about"
@@ -29,8 +31,18 @@
         />
       </div>
       <div v-if="isUserAuthenticated">
-        <span>Some user</span>
-        <q-btn flat label="Logout" class="bg-amber-10" @click="logout" />
+        <q-avatar v-if="getUserProfile.picture" class="q-mx-xs">
+          <img :src="getUserProfile.picture" />
+        </q-avatar>
+        <span v-if="getUserProfile.name || getUserProfile.email">
+          {{ getUserProfile.name || getUserProfile.email }}
+        </span>
+        <q-btn
+          flat
+          label="Logout"
+          class="bg-amber-10 q-ml-md"
+          @click="logout"
+        />
       </div>
     </q-toolbar>
 
@@ -51,10 +63,10 @@ export default {
     this.checkAuth();
   },
   computed: {
-    ...mapGetters(["isUserAuthenticated"])
+    ...mapGetters("user", ["isUserAuthenticated", "getUserProfile"])
   },
   methods: {
-    ...mapActions(["logout", "checkAuth"]),
+    ...mapActions("user", ["logout", "checkAuth"]),
 
     isActivePage(pageName) {
       return this.$router.currentRoute.path.startsWith(pageName, 1);

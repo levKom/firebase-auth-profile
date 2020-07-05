@@ -52,9 +52,9 @@ router.beforeEach(async (to, from, next) => {
   const isPageRequiresAuth = to.matched.some(route => route.meta.requiresAuth);
 
   console.log("isRequiresAuth: ", isPageRequiresAuth);
-  const isAuthenticated = firebase.auth().currentUser;
+  const isAuthenticatedUser = firebase.auth().currentUser;
 
-  if (isPageRequiresAuth && !isAuthenticated) {
+  if (isPageRequiresAuth && !isAuthenticatedUser) {
     next("/signin");
   } else {
     next();

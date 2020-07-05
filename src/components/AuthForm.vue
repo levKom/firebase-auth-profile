@@ -68,7 +68,7 @@
         label="Login with Goggle"
         color="primary"
         icon="google"
-        @click="log"
+        @click="onGoogleLogin"
       />
     </div>
   </div>
@@ -101,10 +101,10 @@ export default {
   },
 
   methods: {
-    ...mapActions(["login", "logout", "register"]),
+    ...mapActions("user", ["login", "logout", "register", "googleLogin"]),
 
-    log() {
-      console.log("google");
+    onGoogleLogin() {
+      this.googleLogin();
     },
 
     onSubmit() {
