@@ -32,7 +32,7 @@
       </div>
       <div v-if="isUserAuthenticated">
         <q-avatar v-if="getUserProfile.picture" class="q-mx-xs">
-          <img :src="getUserProfile.picture" />
+          <img :src="getUserProfile.picture" alt="avatar" />
         </q-avatar>
         <span v-if="getUserProfile.name || getUserProfile.email">
           {{ getUserProfile.name || getUserProfile.email }}
@@ -41,7 +41,7 @@
           flat
           label="Logout"
           class="bg-amber-10 q-ml-md"
-          @click="logout"
+          @click="onLogout"
         />
       </div>
     </q-toolbar>
@@ -67,6 +67,24 @@ export default {
   },
   methods: {
     ...mapActions("user", ["logout", "checkAuth"]),
+
+    onLogout() {
+      this.$q
+        .dialog({
+          title: "Logout confirmation",
+          message: "Are you sure you want to log out?",
+          persistent: true,
+          ok: {
+            color: "secondary"
+          },
+          cancel: {
+            color: "secondary"
+          }
+        })
+        .onOk(() => {
+          this.logout();
+        });
+    },
 
     isActivePage(pageName) {
       return this.$router.currentRoute.path.startsWith(pageName, 1);

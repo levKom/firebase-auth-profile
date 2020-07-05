@@ -65,7 +65,6 @@ const actions = {
 
   redirectToHome() {
     if (!router.currentRoute.path.endsWith("home")) {
-      console.log("redirect");
       router.replace({ name: "home" });
     }
   },
@@ -79,9 +78,8 @@ const actions = {
   async checkAuth({ commit, dispatch }) {
     Loading.show();
     try {
-      const user = await firebase.auth().onAuthStateChanged(user => {
+      await firebase.auth().onAuthStateChanged(user => {
         if (user) {
-          console.log("111", user);
           commit("SET_USER_INFO", user);
           commit("SET_USER_LOGGED_IN");
           dispatch("redirectToHome");
@@ -90,7 +88,6 @@ const actions = {
           dispatch("redirectToSignIn");
         }
       });
-      console.log("checkAuth data : ", user);
     } catch (e) {
       console.log(e);
     } finally {
@@ -98,12 +95,10 @@ const actions = {
     }
   },
 
-  //TODO: Add q-dialog 'are you sure'
   async logout({ commit, dispatch }) {
     Loading.show();
     try {
-      const data = await firebase.auth().signOut();
-      console.log("logout data : ", data);
+      await firebase.auth().signOut();
 
       commit("SET_USER_LOGGED_OUT");
 
@@ -112,26 +107,19 @@ const actions = {
       console.log("logout err: ", e);
     } finally {
       Loading.hide();
-      console.log("finally for loaders");
     }
   },
 
   async register({ commit, dispatch }, { email, password }) {
     Loading.show();
     try {
-      const user = await firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password);
-
-      // await dispatch("redirectToHome");
-      console.log("register user: ", user);
+      await firebase.auth().createUserWithEmailAndPassword(email, password);
 
       commit("SET_USER_LOGGED_IN");
     } catch (e) {
       dispatch("logout");
       console.log("register error: ", e);
     } finally {
-      console.log("finally for loaders");
       Loading.hide();
     }
   }
