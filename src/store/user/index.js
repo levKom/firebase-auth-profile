@@ -70,7 +70,10 @@ const actions = {
   },
 
   redirectToSignIn() {
-    if (!router.currentRoute.path.endsWith("signin")) {
+    if (
+      !router.currentRoute.path.endsWith("signin") &&
+      !router.currentRoute.path.endsWith("signup")
+    ) {
       router.replace({ name: "signin" });
     }
   },
@@ -110,14 +113,13 @@ const actions = {
     }
   },
 
-  async register({ commit, dispatch }, { email, password }) {
+  async register({ commit }, { email, password }) {
     Loading.show();
     try {
       await firebase.auth().createUserWithEmailAndPassword(email, password);
 
       commit("SET_USER_LOGGED_IN");
     } catch (e) {
-      dispatch("logout");
       console.log("register error: ", e);
     } finally {
       Loading.hide();

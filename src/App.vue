@@ -1,6 +1,6 @@
 <template>
   <div class="app text-white column justify-between">
-    <q-toolbar class="bg-black text-white shadow-2 nav">
+    <q-toolbar class="bg-black text-white shadow-2 nav" ref="toolbar">
       <q-btn
         v-if="isUserAuthenticated"
         flat
@@ -31,18 +31,23 @@
         />
       </div>
       <div v-if="isUserAuthenticated">
-        <q-avatar v-if="getUserProfile.picture" class="q-mx-xs">
-          <img :src="getUserProfile.picture" alt="avatar" />
-        </q-avatar>
-        <span v-if="getUserProfile.name || getUserProfile.email">
-          {{ getUserProfile.name || getUserProfile.email }}
-        </span>
-        <q-btn
-          flat
-          label="Logout"
-          class="bg-amber-10 q-ml-md"
-          @click="onLogout"
-        />
+        <div ref="user">
+          <q-avatar v-if="getUserProfile.picture" class="q-mx-xs">
+            <img :src="getUserProfile.picture" alt="avatar" />
+          </q-avatar>
+          <span v-if="getUserProfile.name || getUserProfile.email">
+            {{ getUserProfile.name || getUserProfile.email }}
+          </span>
+        </div>
+        <q-menu anchor="bottom right" self="top right" :offset="[12, 12]">
+          <q-list style="min-width: 100px">
+            <q-item clickable v-close-popup>
+              <q-item-section>
+                <q-btn flat label="Logout" @click="onLogout"
+              /></q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
       </div>
     </q-toolbar>
 
