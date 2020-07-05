@@ -63,13 +63,16 @@
       </div>
     </q-form>
     <div>
-      <h5>sign in with google</h5>
       <q-btn
-        label="Login with Goggle"
-        color="primary"
-        icon="google"
+        label="Sing in with google account"
+        color="secondary"
+        class="q-mt-xl text-white"
         @click="onGoogleLogin"
-      />
+      >
+        <q-avatar size="60px">
+          <img src="../static/google-logo.png" alt="logo" />
+        </q-avatar>
+      </q-btn>
     </div>
   </div>
 </template>

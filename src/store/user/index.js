@@ -41,7 +41,7 @@ const actions = {
       await firebase.auth().signInWithPopup(provider);
       commit("SET_USER_LOGGED_IN");
     } catch (e) {
-      console.log(e);
+      console.log("googleLogin error: ", e);
     } finally {
       Loading.hide();
     }
